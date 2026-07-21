@@ -1,0 +1,257 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Analysis Result | Guardia</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400..700&amp;family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "secondary": "#006c49",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-tertiary-container": "#ffeedd",
+                    "on-primary-container": "#eeefff",
+                    "primary": "#004ac6",
+                    "on-secondary-fixed-variant": "#005236",
+                    "outline-variant": "#c3c6d7",
+                    "inverse-primary": "#b4c5ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-surface-variant": "#434655",
+                    "surface-variant": "#d3e4fe",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#dbe1ff",
+                    "surface-container-low": "#eff4ff",
+                    "background": "#f8f9ff",
+                    "secondary-container": "#6cf8bb",
+                    "primary-container": "#2563eb",
+                    "surface": "#f8f9ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#e5eeff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "outline": "#737686",
+                    "on-surface": "#0b1c30",
+                    "on-primary-fixed": "#00174b",
+                    "secondary-fixed": "#6ffbbe",
+                    "tertiary": "#784b00",
+                    "on-background": "#0b1c30",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-container-high": "#dce9ff",
+                    "surface-container-highest": "#d3e4fe",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-tint": "#0053db",
+                    "tertiary-container": "#996100",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#002113",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "surface-dim": "#cbdbf5",
+                    "inverse-surface": "#213145",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary-container": "#00714d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "stack-lg": "32px",
+                    "container-max": "1200px",
+                    "gutter": "24px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Atkinson Hyperlegible Next"],
+                    "headline-lg": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "label-md": ["Atkinson Hyperlegible Next"],
+                    "body-md": ["Atkinson Hyperlegible Next"],
+                    "headline-md": ["Manrope"],
+                    "label-sm": ["Atkinson Hyperlegible Next"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f8f9ff;
+            color: #0b1c30;
+        }
+        .bento-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 74, 198, 0.05), 0 10px 10px -5px rgba(0, 74, 198, 0.02);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="bg-surface border-b border-outline-variant fixed top-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="text-headline-md font-headline-md font-bold text-primary">Guardia</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">How it Works</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Security Tips</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Support</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:bg-primary-container hover:scale-95 duration-150 transition-all">
+                Check Message
+            </button>
+</div>
+</nav>
+<main class="pt-32 pb-stack-lg min-h-screen px-margin-mobile md:px-margin-desktop">
+<div class="max-w-4xl mx-auto space-y-8">
+<!-- Verdict Section -->
+<section class="text-center space-y-4 animate-in fade-in duration-700 slide-in-from-bottom-4">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-tertiary-fixed text-tertiary mb-2">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'opsz' 48">warning</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">This looks like it could be a scam</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                    Our analysis detected several common patterns used in fraudulent communications. Stay calm—we're here to help you navigate this safely.
+                </p>
+</section>
+<!-- Analysis Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Main Action: Recommended Next Step -->
+<div class="md:col-span-8 bg-surface-container-lowest border border-outline-variant p-8 rounded-xl shadow-sm bento-card">
+<div class="flex flex-col h-full justify-between">
+<div>
+<div class="flex items-center gap-2 text-primary mb-4">
+<span class="material-symbols-outlined">security_update_good</span>
+<span class="font-label-md text-label-md">GUIDED NEXT STEPS</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Don't click any links in this message.</h2>
+<p class="text-on-surface-variant font-body-md text-body-md mb-8">
+                                Clicking links in suspicious messages can lead to fake websites designed to steal your login credentials or install harmful software on your device.
+                            </p>
+</div>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-xl font-label-md text-label-md hover:shadow-lg transition-all active:scale-95">
+                                I've already clicked something
+                            </button>
+<button class="border border-outline text-on-surface px-8 py-4 rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all active:scale-95">
+                                Got it
+                            </button>
+</div>
+</div>
+</div>
+<!-- Red Flags Sidebar -->
+<div class="md:col-span-4 space-y-gutter">
+<div class="bg-surface-container-highest p-6 rounded-xl border border-outline-variant bento-card">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-4">RED FLAGS FOUND</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5">priority_high</span>
+<span class="font-body-md text-body-md">Urgent language used to create panic</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5">link_off</span>
+<span class="font-body-md text-body-md">Unusual URL structure (misspelled domain)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5">person_off</span>
+<span class="font-body-md text-body-md">Generic greeting instead of your name</span>
+</li>
+</ul>
+</div>
+<div class="relative h-48 rounded-xl overflow-hidden group">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A serene and protective conceptual digital artwork depicting a shield-like energy field protecting a simplified digital device. The lighting is soft and ambient with deep cerulean blue and soft amber glow. The style is modern corporate, minimal, and reassuring, evoking a sense of calm and technical security." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKcIqekCKRQ1vv1zUwE7XjOhy2eOtEgHLzASrmOrMwVWyKP4l32jAmH42eSMLF91MaYfccwun022Zcrwli-eUOicHEHpVXPM7CZ_tlz0JoI2Ade8UX3i2iXflgFOA5lwqkyEdlTD-xmeue3q1MWY1DHnobQTBH-2-YlDC9uG7faqRDoq2Sjq43ubfAVnFcaPKJLyZ_riFX_FnR-xLEz5IuAWp99HABX6zXaSxH8RiPaGgbkqbK7Kou')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/60 to-transparent flex items-end p-4">
+<span class="text-white font-label-sm text-label-sm">Security insight: Scammers often impersonate banks to bypass your suspicion.</span>
+</div>
+</div>
+</div>
+<!-- Safe Alternatives -->
+<div class="md:col-span-12 bg-secondary-container/20 border border-secondary/20 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-secondary-container">Safe Alternative</p>
+<p class="font-body-md text-body-md text-on-surface">Contact the service directly through their official app or website.</p>
+</div>
+</div>
+<button class="bg-secondary text-on-secondary px-6 py-2 rounded-full font-label-md text-label-md hover:shadow-md transition-all">
+                        Open Official Website
+                    </button>
+</div>
+</div>
+<!-- Done Action -->
+<div class="flex justify-center pt-8">
+<button class="flex items-center gap-2 text-outline hover:text-on-surface transition-colors font-label-md text-label-md group">
+<span>Back to dashboard</span>
+<span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant">
+<div class="w-full py-stack-lg px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-4 md:mb-0">
+<div class="font-headline-md text-headline-md text-on-surface font-bold">Guardia</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 Guardia Security. Your privacy is our priority.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Simulating a "scan" loading state if user refresh or navigate
+        window.addEventListener('load', () => {
+            console.log('Result ready.');
+        });
+    </script>
+</body></html>

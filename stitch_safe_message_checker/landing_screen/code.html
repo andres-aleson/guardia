@@ -1,0 +1,320 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Guardia | Your Scam-Detection Assistant</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&amp;family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "secondary": "#006c49",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-tertiary-container": "#ffeedd",
+                    "on-primary-container": "#eeefff",
+                    "primary": "#004ac6",
+                    "on-secondary-fixed-variant": "#005236",
+                    "outline-variant": "#c3c6d7",
+                    "inverse-primary": "#b4c5ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-surface-variant": "#434655",
+                    "surface-variant": "#d3e4fe",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#dbe1ff",
+                    "surface-container-low": "#eff4ff",
+                    "background": "#f8f9ff",
+                    "secondary-container": "#6cf8bb",
+                    "primary-container": "#2563eb",
+                    "surface": "#f8f9ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#e5eeff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "outline": "#737686",
+                    "on-surface": "#0b1c30",
+                    "on-primary-fixed": "#00174b",
+                    "secondary-fixed": "#6ffbbe",
+                    "tertiary": "#784b00",
+                    "on-background": "#0b1c30",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-container-high": "#dce9ff",
+                    "surface-container-highest": "#d3e4fe",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-tint": "#0053db",
+                    "tertiary-container": "#996100",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#002113",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "surface-dim": "#cbdbf5",
+                    "inverse-surface": "#213145",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary-container": "#00714d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "stack-lg": "32px",
+                    "container-max": "1200px",
+                    "gutter": "24px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Atkinson Hyperlegible Next"],
+                    "headline-lg": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "label-md": ["Atkinson Hyperlegible Next"],
+                    "body-md": ["Atkinson Hyperlegible Next"],
+                    "headline-md": ["Manrope"],
+                    "label-sm": ["Atkinson Hyperlegible Next"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(0, 74, 198, 0.05);
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 74, 198, 0.08);
+        }
+
+        /* Ambient background glow */
+        .bg-glow {
+            background: radial-gradient(circle at 50% 50%, rgba(0, 74, 198, 0.03) 0%, rgba(248, 249, 255, 0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+<span class="text-headline-md font-headline-md font-bold text-primary">Guardia</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 font-bold" href="#">How it Works</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Security Tips</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all active:scale-95 duration-150 ease-in-out soft-shadow">
+                Check Message
+            </button>
+</nav>
+</header>
+<main class="flex-grow pt-24">
+<!-- Hero Section -->
+<section class="relative overflow-hidden py-24 md:py-32 bg-glow">
+<div class="max-w-container-max mx-auto px-margin-desktop text-center relative z-10">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm mb-8 animate-fade-in">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span>Trusted by 50,000+ users worldwide</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg md:text-[56px] md:leading-[64px] text-on-surface max-w-[800px] mx-auto mb-6">
+                    Not sure about a message? <br>
+<span class="text-primary">Let's check it together.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px] mx-auto mb-12">
+                    Upload a screenshot or paste a suspicious link. Guardia uses advanced AI to analyze threats and keep your identity safe in real-time.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="w-full sm:w-auto bg-primary text-on-primary px-10 py-5 rounded-xl font-headline-md text-headline-md hover:bg-primary-container transition-all hover-lift active:scale-95 flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">add_moderator</span>
+                        Check a message
+                    </button>
+<button class="w-full sm:w-auto bg-surface border border-outline-variant text-on-surface px-10 py-5 rounded-xl font-headline-md text-headline-md hover:bg-surface-container-low transition-all active:scale-95">
+                        Learn Privacy
+                    </button>
+</div>
+<!-- Simple Trust Indicators -->
+<div class="mt-16 flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">lock</span>
+<span class="font-label-md text-label-md">Bank-Level Encryption</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">no_accounts</span>
+<span class="font-label-md text-label-md">Zero-Data Logging</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-md text-label-md">GDPR Compliant</span>
+</div>
+</div>
+</div>
+<!-- Subtle Decorative Elements -->
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
+<div class="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/5 rounded-full blur-[100px]"></div>
+</div>
+</section>
+<!-- Feature Bento Grid -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Main Feature Card -->
+<div class="md:col-span-2 bg-white p-8 rounded-3xl border border-outline-variant flex flex-col justify-between hover-lift">
+<div>
+<div class="w-12 h-12 bg-surface-variant text-primary rounded-xl flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[28px]">search_insights</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Real-time Link Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md">
+                                Every link you submit is scanned against 50+ global threat databases and analyzed by our "Wise Companion" AI for behavioral red flags.
+                            </p>
+</div>
+<div class="rounded-2xl overflow-hidden aspect-video bg-surface-container relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A clean, minimalist digital interface showing a scanning process with a soft blue progress ring and clear, readable text. The aesthetic is modern corporate with a focus on clarity and reassurance. Soft lighting and deep whitespace create a sense of professional security." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBqJjqHarFoTOMKPTjF0VoLaSUgacE6rZJ92EMozM13rz6V1HH7ElGA0Lbq_Lbo2PbgVdNGBgtSEh-FFl_4CALtGzjVQiH1ulBHrodjfNhag_JIXzT5k97B-j2gst-LAkRYG3e-zTcpL5YpJW4EvWcrrFlgwFeVW7p_mswtiQRqTSgSNyRzZpWQx2_lq1BDlk_mik6jztNvzQjD8ua6TVh7nXVTvZSh_i1b1cDBOXbrDOXIx6YVRlAJ')"></div>
+</div>
+</div>
+<!-- Secondary Feature 1 -->
+<div class="bg-surface-container-low p-8 rounded-3xl border border-outline-variant hover-lift flex flex-col">
+<div class="w-12 h-12 bg-white text-secondary rounded-xl flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-[28px]">chat_bubble</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">SMS &amp; WhatsApp</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                            Tired of "Hi Mom" or parcel delivery scams? Forward them to us for instant verification and blocking advice.
+                        </p>
+<div class="mt-8 pt-8 border-t border-outline-variant/30">
+<span class="text-primary font-label-md text-label-md flex items-center gap-2 group cursor-pointer">
+                                View guides <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Secondary Feature 2 -->
+<div class="bg-surface-container-high p-8 rounded-3xl border border-outline-variant hover-lift flex flex-col">
+<div class="w-12 h-12 bg-white text-tertiary rounded-xl flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-[28px]">psychology</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Threat Education</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                            We don't just say "No." We explain why a message is risky, helping you develop a sixth sense for digital fraud.
+                        </p>
+<div class="mt-8 pt-8 border-t border-outline-variant/30">
+<span class="text-on-surface font-label-md text-label-md flex items-center gap-2 group cursor-pointer">
+                                Latest reports <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Image Showcase -->
+<div class="md:col-span-2 rounded-3xl overflow-hidden h-[300px] relative border border-outline-variant">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A serene workspace with a smartphone displaying a 'Safe' notification from an app. The background is a brightly lit, modern office with soft-focus indoor plants and warm wooden accents. The atmosphere is calm and professional, conveying a sense of digital peace and protection." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjPLMBNjaeGZeopRLSnXfoApdT7JG1y9A4N9lDu1mk7q_vN4eldf9MCP1LkO-DBvb7ELSCi5eqlZ7GDQYfH_kz870fPZOinzXozVdjMo7BYG1EbuB7y_IjGF-sUjysG8ummMK3sCHoXIquCsSiusvt9En12IQAQR6HHHSRX5SLFcvn-dtJeyh17SDrLWFStfftItAQT48Ovu7D7i1UHjMdCXfEnEhXHXZ3GjNuwBFV7udXrYC_H2Ux')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/40 to-transparent flex items-end p-8">
+<p class="text-white font-headline-md text-headline-md">Protecting your digital peace of mind.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 text-center">
+<div class="max-w-[700px] mx-auto px-margin-desktop">
+<span class="material-symbols-outlined text-[64px] text-primary mb-6" style="font-variation-settings: 'FILL' 1;">verified</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-6">Stay one step ahead of scammers.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12">
+                    Join thousands of people who trust Guardia to filter out the noise and keep their financial lives secure. No sign-up required for your first check.
+                </p>
+<button class="bg-primary text-on-primary px-12 py-5 rounded-2xl font-headline-md text-headline-md hover:bg-primary-container transition-all hover-lift active:scale-95">
+                    Start Protection Now
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant">
+<div class="w-full py-stack-lg px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface text-[24px]">shield</span>
+<span class="font-headline-md text-headline-md text-on-surface">Guardia</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 Guardia Security. Your privacy is our priority.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline transition-all" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline transition-all" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline transition-all" href="#">Help Center</a>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all cursor-pointer">
+<span class="material-symbols-outlined">public</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all cursor-pointer">
+<span class="material-symbols-outlined">mail</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- Simple Interaction Script -->
+<script>
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', function() {
+                this.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', function() {
+                this.classList.remove('scale-95');
+            });
+        });
+
+        // Sticky Header effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-sm');
+                header.classList.remove('border-b');
+            } else {
+                header.classList.remove('shadow-sm');
+                header.classList.add('border-b');
+            }
+        });
+    </script>
+</body></html>
