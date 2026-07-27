@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export function SiteHeader() {
@@ -19,7 +20,7 @@ export function SiteHeader() {
       }`}
     >
       <nav className="max-w-container-max mx-auto flex w-full items-center justify-between px-margin-desktop py-4">
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <span
             className="material-symbols-outlined text-primary text-[28px]"
             style={{ fontVariationSettings: "'FILL' 1" }}
@@ -29,7 +30,7 @@ export function SiteHeader() {
           <span className="font-headline-md text-headline-md text-primary font-bold">
             Guardia
           </span>
-        </div>
+        </Link>
         <div className="hidden items-center gap-8 md:flex">
           <a
             className="font-label-md text-label-md text-primary border-primary border-b-2 pb-1 font-bold"
@@ -50,9 +51,12 @@ export function SiteHeader() {
             Support
           </a>
         </div>
-        <button className="bg-primary text-on-primary hover:bg-primary-container soft-shadow rounded-full px-6 py-2.5 font-label-md text-label-md transition-all duration-150 ease-in-out active:scale-95">
+        <Link
+          href="/check"
+          className="bg-primary text-on-primary hover:bg-primary-container soft-shadow rounded-full px-6 py-2.5 font-label-md text-label-md transition-all duration-150 ease-in-out active:scale-95"
+        >
           Check Message
-        </button>
+        </Link>
       </nav>
     </header>
   );

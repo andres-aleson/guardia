@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function Home() {
   return (
@@ -27,12 +29,15 @@ export default function Home() {
               real-time.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <button className="hover-lift flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-10 py-5 font-headline-md text-headline-md text-on-primary transition-all hover:bg-primary-container active:scale-95 sm:w-auto">
+              <Link
+                href="/check"
+                className="hover-lift flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-10 py-5 font-headline-md text-headline-md text-on-primary transition-all hover:bg-primary-container active:scale-95 sm:w-auto"
+              >
                 <span className="material-symbols-outlined">
                   add_moderator
                 </span>
                 Check a message
-              </button>
+              </Link>
               <button className="border-outline-variant text-on-surface hover:bg-surface-container-low w-full rounded-xl border bg-surface px-10 py-5 font-headline-md text-headline-md transition-all active:scale-95 sm:w-auto">
                 Learn Privacy
               </button>
@@ -190,59 +195,17 @@ export default function Home() {
               noise and keep their financial lives secure. No sign-up
               required for your first check.
             </p>
-            <button className="hover-lift rounded-2xl bg-primary px-12 py-5 font-headline-md text-headline-md text-on-primary transition-all hover:bg-primary-container active:scale-95">
+            <Link
+              href="/check"
+              className="hover-lift inline-block rounded-2xl bg-primary px-12 py-5 font-headline-md text-headline-md text-on-primary transition-all hover:bg-primary-container active:scale-95"
+            >
               Start Protection Now
-            </button>
+            </Link>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-surface-container-lowest border-outline-variant border-t">
-        <div className="max-w-container-max mx-auto flex w-full flex-col items-center justify-between gap-8 px-margin-desktop py-stack-lg md:flex-row">
-          <div className="flex flex-col items-center gap-4 md:items-start">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-on-surface text-[24px]">
-                shield
-              </span>
-              <span className="font-headline-md text-headline-md text-on-surface">
-                Guardia
-              </span>
-            </div>
-            <p className="font-body-md text-body-md text-on-surface-variant">
-              © 2024 Guardia Security. Your privacy is our priority.
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-8">
-            <a
-              className="text-on-surface-variant hover:text-primary font-label-sm text-label-sm underline transition-all"
-              href="#"
-            >
-              Privacy Policy
-            </a>
-            <a
-              className="text-on-surface-variant hover:text-primary font-label-sm text-label-sm underline transition-all"
-              href="#"
-            >
-              Terms of Service
-            </a>
-            <a
-              className="text-on-surface-variant hover:text-primary font-label-sm text-label-sm underline transition-all"
-              href="#"
-            >
-              Help Center
-            </a>
-          </div>
-          <div className="flex gap-4">
-            <div className="border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border transition-all">
-              <span className="material-symbols-outlined">public</span>
-            </div>
-            <div className="border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border transition-all">
-              <span className="material-symbols-outlined">mail</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
