@@ -1,6 +1,6 @@
 # Execution Plan: Input & Checking Flow (B1–B3)
 
-**Status: Phases 1–3 (B1, B2, B3) built and browser-verified. Awaiting approval to commit Phase 3.**
+**Status: Phases 1–4 complete (B1, B2, B3 built and committed; end-to-end pass done). Awaiting approval to commit Phase 4.**
 
 Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -32,7 +32,7 @@ Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into b
 
 📦 **Commit checkpoint:** B1 complete — see commit for this phase.
 
-## Phase 2 — B2: Checking / Loading Screen ✅ (built, verified — commit pending your approval)
+## Phase 2 — B2: Checking / Loading Screen ✅ (built, verified, committed)
 
 - [x] Static UI: rotating calm status messages + a progress indicator that reads as advancing (not purely decorative) — matches the Stitch `checking_screen` mockup's tone (calm icon, "Taking a look for you…", secure-analysis label).
 - [x] Stub check: a fixed 4s delay per attempt standing in for a real API call (`CHECK_DELAY_MS` in `check-form.tsx` — easy to retune once real latency is known).
@@ -43,9 +43,9 @@ Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into b
 
 🧪 **Test checkpoint — done:** Verified all three simulate modes in the browser. Success → checking screen (rotating messages, advancing progress bar) → success placeholder. Fail once → checking screen runs a full attempt, silently retries with no visible error state, then lands on the success placeholder. Always fail → runs two full attempts, then lands on the failed placeholder. No console errors; `tsc --noEmit`, `next lint`, and `next build` all clean.
 
-📦 **Commit checkpoint:** B2 complete — holding for your review/approval before committing.
+📦 **Commit checkpoint:** B2 complete — committed.
 
-## Phase 3 — B3: Analysis Failed Screen ✅ (built, verified — commit pending your approval)
+## Phase 3 — B3: Analysis Failed Screen ✅ (built, verified, committed)
 
 Replaces the "(Placeholder) Checking failed after retry" state from Phase 2 with the real screen. (The success-path placeholder is out of scope here — it gets replaced separately whenever the C1–C3 Result screens are built, which is a different feature per the mini-PRD.)
 
@@ -54,17 +54,21 @@ Replaces the "(Placeholder) Checking failed after retry" state from Phase 2 with
 
 🧪 **Test checkpoint — done:** Forced repeated failures ("Always fail" mode) to land on B3; copy reads calm, not alarming. Clicked "Try again" — correctly re-entered the checking screen and (since the simulate mode was still "always fail") correctly landed back on B3 a second time, proving retry re-runs against the same input without needing it re-typed. "Start over instead" correctly clears the textarea back to a blank input screen. No console errors; `tsc --noEmit`, `next lint`, and `next build` all clean.
 
-📦 **Commit checkpoint:** B3 complete — holding for your review/approval before committing.
+📦 **Commit checkpoint:** B3 complete — committed.
 
-## Phase 4 — End-to-end pass
+## Phase 4 — End-to-end pass ✅ (done — commit pending your approval)
 
-- [ ] Full click-through: B1 → B2 → (success or failure) → retry paths → B3 → Retry → back into B2.
-- [ ] Accessibility pass: keyboard-only navigation, screen-reader labels on the textarea/buttons/status text, contrast check across all three screens.
-- [ ] Confirm no regressions to the landing page (A1) and that build/lint/type-check are still clean.
+- [x] Full click-through: B1 → B2 → (success or failure) → retry paths → B3 → Retry → back into B2. Ran as one continuous session (landing page → real click into `/check` → fail-once success loop → Start over → always-fail → B3 → Try again → back into checking), not phase-by-phase in isolation.
+- [x] Accessibility pass: keyboard-only navigation, screen-reader labels on the textarea/buttons/status text, contrast check across all three screens. Found and fixed two real issues — see below.
+- [x] Confirm no regressions to the landing page (A1) and that build/lint/type-check are still clean.
 
-🧪 **Test checkpoint:** Walk the entire flow start to finish in the browser — both the happy path and the failure path.
+🧪 **Test checkpoint — done:** Walked the entire flow start to finish in the browser, both happy and failure paths, in one continuous session. No console errors anywhere in the run. Landing page re-screenshotted and confirmed unaffected. `tsc --noEmit`, `next lint`, and `next build` all clean after the accessibility fixes below.
 
-📦 **Commit checkpoint:** feature complete.
+**Two real bugs found and fixed during this pass:**
+1. **Missing visible focus indicator on the B3 heading.** Phase 3's auto-focus fix (moving screen-reader focus to the failure heading) had `outline-none` in its className, which suppressed the native focus ring entirely — helped screen-reader users (via the focus event) but left sighted keyboard users with no visible indicator of where focus landed. Fixed by adding an explicit `focus:ring-2 focus:ring-primary` in its place. Confirmed the underlying CSS rule compiles correctly; couldn't visually screenshot the ring since this automated browser tab doesn't hold real OS window focus (`document.hasFocus()` is `false` here), so `:focus` never visually triggers in this environment — verified by inspecting the compiled stylesheet directly instead.
+2. **Contrast failure on small reassurance text.** The `outline` color (`#737686`) used at 12px (`label-sm`) for "Your data is never shared or sold," "Secure Analysis," and "Encrypted & Private Analysis" measured 4.28:1 against the page background — below WCAG AA's 4.5:1 minimum for normal-sized text (computed with the standard WCAG relative-luminance formula, not eyeballed). Fixed by switching all four `text-outline` instances in `check-form.tsx` (including the textarea placeholder) to `on-surface-variant` (`#434655`), which already measures 8.9:1+ in every context it's used — reusing an existing, proven token rather than introducing a new color. The landing page was unaffected; it never used this color.
+
+📦 **Commit checkpoint:** feature complete — holding for your review/approval before committing.
 
 ## Decisions log
 
@@ -88,6 +92,10 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Added a secondary "Start over instead" text link** below the primary "Try again" button — not explicitly called for in the mini-PRD, but without it, someone who wants to reconsider or edit what they submitted (rather than retry the exact same text) would have no way back to the input screen. Kept deliberately small/secondary so "Try again" stays the one clear recommended action, per the "one recommendation at a time" design principle.
 - **Added focus management on arrival at B3:** the heading receives programmatic focus when the stage changes to "failed," since this is a same-page state transition (not a route change) and would otherwise go unannounced to screen reader users. Same reasoning as the `role="alert"` addition in Phase 1 — this is the single most anxiety-loaded moment in the flow for this persona, so it gets an accessibility bar slightly above copy-paste-minimum.
 - **No new failure-type differentiation added**, even though a real backend will eventually have distinguishable errors (timeout vs. service error vs. rate limit, etc.) — confirms the mini-PRD's decision to keep this screen deliberately generic.
+
+**Phase 4 (end-to-end pass):**
+- **Fixed both accessibility issues found during the audit immediately**, rather than just logging them for a later pass — both were small, scoped, low-risk changes (a Tailwind class swap in each case), and the whole point of this checkpoint was to catch exactly this kind of thing before calling the feature done.
+- **Verified keyboard tab order and focus-ring CSS by inspecting the DOM/CSSOM directly** (focusable-element enumeration in DOM order, and reading the compiled stylesheet for the expected `:focus` rule) rather than relying only on synthetic keypresses and screenshots — the automated browser tab used for testing doesn't hold real OS window focus, so native `:focus`-triggered styles don't visually render there even when correctly wired. Confirmed this is a testing-environment limitation, not an application bug, by checking `document.hasFocus()` (`false`) and finding the correct compiled CSS rule directly.
 
 ## Related docs
 

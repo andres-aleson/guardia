@@ -166,14 +166,14 @@ export function CheckForm() {
               }`}
             >
               <textarea
-                className="placeholder:text-outline h-64 w-full resize-none border-none bg-transparent p-stack-md font-body-md text-body-md text-on-surface focus:ring-0 md:h-80"
+                className="placeholder:text-on-surface-variant h-64 w-full resize-none border-none bg-transparent p-stack-md font-body-md text-body-md text-on-surface focus:ring-0 md:h-80"
                 placeholder="Paste the message here, or describe what happened…"
                 aria-label="Message or description to check"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
               />
               <div className="border-outline-variant flex items-center justify-end border-t px-stack-md py-stack-sm">
-                <span className="text-label-sm font-label-sm text-outline flex items-center gap-1">
+                <span className="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px]">
                     lock
                   </span>
@@ -196,7 +196,7 @@ export function CheckForm() {
                   arrow_forward
                 </span>
               </button>
-              <p className="mt-stack-md flex items-center gap-2 font-label-sm text-label-sm text-outline">
+              <p className="mt-stack-md flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant">
                 <span className="material-symbols-outlined text-[14px]">
                   lock
                 </span>
@@ -236,7 +236,7 @@ export function CheckForm() {
                 />
               </div>
               <div className="mt-4 flex items-center justify-between px-1">
-                <span className="text-outline flex items-center gap-1 font-label-sm text-label-sm">
+                <span className="text-on-surface-variant flex items-center gap-1 font-label-sm text-label-sm">
                   <span className="material-symbols-outlined text-[14px]">
                     lock
                   </span>
@@ -287,7 +287,7 @@ export function CheckForm() {
             <h1
               ref={failedHeadingRef}
               tabIndex={-1}
-              className="font-headline-lg text-headline-lg text-on-surface mb-stack-sm outline-none"
+              className="font-headline-lg text-headline-lg text-on-surface focus:ring-primary mb-stack-sm rounded-sm focus:ring-2 focus:outline-none"
             >
               We couldn&apos;t check this right now
             </h1>
