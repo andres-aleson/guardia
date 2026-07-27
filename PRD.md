@@ -6,7 +6,7 @@
 
 **Primary persona: the Vulnerable Decision-Maker.** Someone (often older, or less confident with technology) who receives a suspicious email, text, or call and needs to decide what to do — without technical knowledge, without feeling judged, and ideally without having to ask a family member every time.
 
-**Core need:** paste/forward a suspicious message → get a plain-language verdict → get one clear next step → act independently.
+**Core need:** paste a suspicious message → get a plain-language verdict → get one clear next step → act independently.
 
 **Design principles** (derived from your mockups' `DESIGN.md`):
 - Calm over alarming — no red klaxons, no jargon, no shame.
@@ -23,16 +23,14 @@ Screens are grouped by when the user encounters them. Screens marked **(mockup)*
 | # | Screen | Purpose |
 |---|--------|---------|
 | A1 | **Landing / Home** (mockup, *needs simplifying*) | Entry point. Mockup is a full marketing site (hero, feature grid, trust badges, footer). Your happy-path spec wants something much calmer: one headline + one button. **Recommendation:** use a simplified variant for the actual product surface (esp. for a user arriving mid-panic from a forwarded text); keep the fuller marketing content only for a separate public/pre-download marketing page if one exists. |
-| A2 | **Onboarding (1–2 screens) (new)** | First-launch only. Explains in one or two lines what the app does and reassures on privacy ("we don't store or share your messages") before asking the user to paste anything sensitive. Skippable. Sets `onboarding_completed` flag. |
-| A3 | **Mobile Share/Forward Setup (new)** | Explains how to enable "Share to [App]" from Messages/Mail so a user can forward a suspicious text/email directly instead of copy-pasting. Needed because the Input screen's spec explicitly offers "forward an email/text directly if on mobile" — that requires OS share-sheet integration, which the user won't discover without a short explainer. |
 
 ### B. Core happy path
 
 | # | Screen | Purpose |
 |---|--------|---------|
-| B1 | **Input Screen** (mockup) | Paste/type a message, or attach a screenshot, or arrive here pre-filled via the OS share sheet (from A3). Single "Check This" button. Inline validation state if empty (mockup already shows a shake animation — keep as inline state, not a separate screen). |
-| B2 | **Checking / Loading Screen** (mockup) | Calm rotating status text ("Checking sender…", "Looking at the link…"). No countdown pressure. Auto-advances to a Result screen. |
-| B3 | **Analysis Failed Screen (new)** | Needed for when the check can't complete — no network, service error, unreadable attachment. Plain-language message ("We couldn't check this right now") + Retry button + a fallback tip ("If you're worried, don't click anything until you can try again"). Without this, a failed API call has nowhere to go. |
+| B1 | **Input Screen** (mockup, *text-only*) | A single textarea: paste/type a message, or describe what happened in your own words (covers the "I got a call" case without a phone-specific flow — proper call support is deferred). No image/screenshot attachment (dropped: OCR on real-world scam screenshots is unreliable enough that a garbled extraction could produce a confidently wrong verdict, which is worse than not offering it — see §5). Single "Check This" button. Inline validation state if empty (mockup already shows a shake animation — keep as inline state, not a separate screen). |
+| B2 | **Checking / Loading Screen** (mockup) | Calm rotating status text ("Checking sender…", "Looking at the link…") — all text-appropriate already, no rework needed for the text-only decision. No countdown pressure. Auto-advances to a Result screen. **Build note:** no analysis backend exists yet (that lands with the C screens), so this will initially run against a stub (fixed delay, canned result) and get wired to the real call later. |
+| B3 | **Analysis Failed Screen (new)** | For when the check can't complete at all — no network or service error (the "unreadable attachment" case drops out along with screenshots). Distinct from C3: B3 is an infrastructure failure with no analysis to show; C3 is a completed analysis that's just inconclusive. One single, generic, calm message regardless of the underlying error (no jargon, no differentiating error types) — "We couldn't check this right now" — plus a Retry button and a fallback safety tip ("If you're worried, don't click anything until you can try again"), so the user isn't left with nothing to do even when the check fails. |
 
 ### C. Result — three verdict variants
 
@@ -49,7 +47,7 @@ The mockup only shows the "risky" case. The happy path implies at least two more
 | # | Screen | Purpose |
 |---|--------|---------|
 | D1 | **"I Already Clicked/Responded" Screen (new)** | Triggered from the Result screen's escalation button. Same calm, judgment-free tone. Step-by-step remediation (e.g., change the password, call the bank, watch statements) — one step visible at a time, not a checklist wall. This is the single most important screen for a Vulnerable Decision-Maker who has already been scammed and is now anxious/ashamed — it must not exist only as a dead-end button in the mockup. |
-| D2 | **Notify a Trusted Contact (optional, new — needs a decision, see §5)** | Only reachable from D1. Lets the user optionally loop in a pre-configured family member/trusted contact after something has already gone wrong (not for routine checks — that would undercut the "without handing the decision to someone else" goal from your user stories). |
+| D2 | **Notify a Trusted Contact (optional, new — needs a decision, see §4)** | Only reachable from D1. Lets the user optionally loop in a pre-configured family member/trusted contact after something has already gone wrong (not for routine checks — that would undercut the "without handing the decision to someone else" goal from your user stories). |
 
 ### E. History
 
@@ -68,7 +66,7 @@ The mockup's Result screen has a "Back to dashboard" link, implying persistence.
 | F2 | **How It Works (new — nav link exists in mockup)** | Static explainer, builds trust before first use. |
 | F3 | **Security Tips (new — nav link exists in mockup)** | Static general scam-awareness content, addresses the "develop a sixth sense" goal from the mockup copy. |
 | F4 | **Support / Contact (new — nav link exists in mockup)** | How to reach a human, and ideally a pointer to real elder-fraud helplines — this audience sometimes needs more than an app. |
-| F5 | **Privacy Policy (new — footer link exists in mockup)** | Required; especially important given the "Zero-Data Logging" claim in the marketing copy (see §5 — this claim needs to be true or removed). |
+| F5 | **Privacy Policy (new — footer link exists in mockup)** | Required; especially important given the "Zero-Data Logging" claim in the marketing copy (see §3/§4 — this claim needs to be true or removed). |
 | F6 | **Terms of Service (new — footer link exists in mockup)** | Required. |
 
 ## 3. Data: what's saved, and where
@@ -76,8 +74,8 @@ The mockup's Result screen has a "Back to dashboard" link, implying persistence.
 **Recommendation: local-first, no account required for v1.** This matches the marketing copy's privacy claims and avoids the trust/onboarding friction of a signup for an anxious user who just wants an answer.
 
 **On-device storage:**
-- Check history entries: id, timestamp, raw input (text and/or reference to attached image), content type (text/email/sms/link/screenshot), verdict (safe / risky / not-sure), red flags detected, recommended action shown, whether escalation (D1) was triggered, whether "Got it" was confirmed.
-- Settings: text size, contrast/theme, onboarding-completed flag, trusted contact info if the user opts in (name + phone/email).
+- Check history entries: id, timestamp, raw input text, content type (message text / description of a call), verdict (safe / risky / not-sure), red flags detected, recommended action shown, whether escalation (D1) was triggered, whether "Got it" was confirmed.
+- Settings: text size, contrast/theme, trusted contact info if the user opts in (name + phone/email).
 - Static content for F2/F3 can simply be bundled with the app, not per-user data.
 
 **Server-side (only what's needed to run the check):**
@@ -98,6 +96,8 @@ The mockup's Result screen has a "Back to dashboard" link, implying persistence.
 - Server-side account sync of history across devices.
 - Automated "report incorrect verdict" feedback loop.
 - Any in-app action that directly blocks/reports a sender (out of scope until there's a clear provider integration, e.g., carrier-level blocking).
+- Image/screenshot attachment (with OCR to extract text). Considered and deliberately deferred: OCR on real-world scam screenshots (message bubbles, timestamps, emoji, low-res photos) is unreliable enough that a garbled extraction could produce a confidently wrong verdict — worse than not offering the feature. Revisit only with a specific accuracy bar in mind, and note it raises the privacy surface too (screenshots often catch more incidental personal info than text).
+- Dedicated phone-call flow (structured phone-number lookup, call-specific fields). v1 covers calls only via free-text description in the same input as messages.
 
 ---
 *No code has been written. This is a planning document for review.*
