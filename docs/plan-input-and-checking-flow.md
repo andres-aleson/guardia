@@ -1,6 +1,6 @@
 # Execution Plan: Input & Checking Flow (B1–B3)
 
-**Status: Phases 1–4 complete (B1, B2, B3 built and committed; end-to-end pass done). Awaiting approval to commit Phase 4.**
+**Status: Feature complete. All four phases (B1, B2, B3, end-to-end pass) built, verified, and committed.**
 
 Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -68,7 +68,7 @@ Replaces the "(Placeholder) Checking failed after retry" state from Phase 2 with
 1. **Missing visible focus indicator on the B3 heading.** Phase 3's auto-focus fix (moving screen-reader focus to the failure heading) had `outline-none` in its className, which suppressed the native focus ring entirely — helped screen-reader users (via the focus event) but left sighted keyboard users with no visible indicator of where focus landed. Fixed by adding an explicit `focus:ring-2 focus:ring-primary` in its place. Confirmed the underlying CSS rule compiles correctly; couldn't visually screenshot the ring since this automated browser tab doesn't hold real OS window focus (`document.hasFocus()` is `false` here), so `:focus` never visually triggers in this environment — verified by inspecting the compiled stylesheet directly instead.
 2. **Contrast failure on small reassurance text.** The `outline` color (`#737686`) used at 12px (`label-sm`) for "Your data is never shared or sold," "Secure Analysis," and "Encrypted & Private Analysis" measured 4.28:1 against the page background — below WCAG AA's 4.5:1 minimum for normal-sized text (computed with the standard WCAG relative-luminance formula, not eyeballed). Fixed by switching all four `text-outline` instances in `check-form.tsx` (including the textarea placeholder) to `on-surface-variant` (`#434655`), which already measures 8.9:1+ in every context it's used — reusing an existing, proven token rather than introducing a new color. The landing page was unaffected; it never used this color.
 
-📦 **Commit checkpoint:** feature complete — holding for your review/approval before committing.
+📦 **Commit checkpoint:** feature complete — committed.
 
 ## Decisions log
 
