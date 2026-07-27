@@ -1,6 +1,6 @@
 # Execution Plan: Input & Checking Flow (B1–B3)
 
-**Status: Phase 1 (B1) complete. Phase 2 (B2) not started.**
+**Status: Phase 1 (B1) and Phase 2 (B2) built and browser-verified. Awaiting approval to commit Phase 2.**
 
 Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -32,20 +32,22 @@ Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into b
 
 📦 **Commit checkpoint:** B1 complete — see commit for this phase.
 
-## Phase 2 — B2: Checking / Loading Screen
+## Phase 2 — B2: Checking / Loading Screen ✅ (built, verified — commit pending your approval)
 
-- [ ] Static UI: rotating calm status messages + a progress indicator that reads as advancing (not purely decorative) — matches the Stitch `checking_screen` mockup.
-- [ ] Stub check: a fixed delay standing in for a real API call.
-- [ ] A way to force success vs. failure in the stub (temporary dev-only toggle), so both paths are actually testable without a real backend.
-- [ ] One silent automatic retry on simulated failure before falling through to B3 — per our discussion, the user shouldn't see an error screen on the first transient blip.
+- [x] Static UI: rotating calm status messages + a progress indicator that reads as advancing (not purely decorative) — matches the Stitch `checking_screen` mockup's tone (calm icon, "Taking a look for you…", secure-analysis label).
+- [x] Stub check: a fixed 4s delay per attempt standing in for a real API call (`CHECK_DELAY_MS` in `check-form.tsx` — easy to retune once real latency is known).
+- [x] A way to force success vs. failure in the stub: a visible, clearly-marked "Dev preview" toggle (dashed border, distinct from real UI) with three buttons — Success / Fail once (auto-retries) / Always fail — shown on the input screen. Chose a visible toggle over a URL query param so it's trivially testable by hand, not just from a browser address bar.
+- [x] One silent automatic retry on simulated failure before falling through to a failure state — confirmed the user never sees an error UI on a single transient blip; the checking screen just keeps going.
 
-🤔 **Decision point:** B2 needs somewhere to go on stub success, but the real Result screens (C1–C3) don't exist yet. Options: (a) a bare placeholder screen just to prove the wiring works, or (b) leave the success path unwired until C is built. Decide before starting this phase.
+🤔 **Decision point — resolved:** went with option (a), bare placeholder screens, for *both* ends of B2 (not just success) — since B3 doesn't exist until Phase 3 either, a stub "checking failed" fall-through had nowhere real to go, same problem as the success side. Both placeholders are visually marked as temporary (dashed border, "(Placeholder)" in the heading) so they're unmistakable for finished design. Full reasoning logged below.
 
-🧪 **Test checkpoint:** Confirm the status messages rotate at a reasonable pace and the progress indicator feels like it's advancing. Force a failure and confirm the silent retry kicks in. Force a second failure and confirm it correctly falls through to B3.
+🧪 **Test checkpoint — done:** Verified all three simulate modes in the browser. Success → checking screen (rotating messages, advancing progress bar) → success placeholder. Fail once → checking screen runs a full attempt, silently retries with no visible error state, then lands on the success placeholder. Always fail → runs two full attempts, then lands on the failed placeholder. No console errors; `tsc --noEmit`, `next lint`, and `next build` all clean.
 
-📦 **Commit checkpoint:** B2 complete.
+📦 **Commit checkpoint:** B2 complete — holding for your review/approval before committing.
 
 ## Phase 3 — B3: Analysis Failed Screen
+
+Replaces the "(Placeholder) Checking failed after retry" state from Phase 2 with the real screen. (The success-path placeholder is out of scope here — it gets replaced separately whenever the C1–C3 Result screens are built, which is a different feature per the mini-PRD.)
 
 - [ ] Static UI: one generic, calm failure message, a fallback safety tip, and a Retry button — no jargon, no differentiating error types, per the mini-PRD.
 - [ ] Wire Retry to re-run the stub check against the *same* held input — no retyping required.
@@ -74,6 +76,13 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Dropped the mockup's 3-column trust-badges grid** (Expert Analysis / Human-First / Real-time Updates) below the button. It's marketing chrome carried over from the fuller mockup, not called for in the mini-PRD's description of B1, and competes with the single primary action.
 - **B1's "carry forward" requirement, concretely:** since B2 doesn't exist yet, valid submission transitions to a temporary in-page confirmation panel that echoes the captured text back (with a "Start over" reset), rather than navigating anywhere. This proves the state hand-off works without building throwaway B2 UI ahead of Phase 2 — the panel gets replaced, not extended, when B2 lands.
 - **Reused the mockup's original validation threshold** (minimum 5 trimmed characters) rather than picking a new number.
+
+**Phase 2 (B2):**
+- **Resolved the B2-success decision point:** built a bare placeholder screen for stub success (option (a) from the plan), and — since it turned out to be the same underlying problem — did the same for the stub-exhausted-retries failure state, rather than leaving either unwired. Both are clearly marked "(Placeholder)" with a dashed border so they read as obviously temporary, not finished design.
+- **Dev-only simulate toggle is a visible UI control, not a URL query param.** More convenient for hand-testing (no need to know or type param syntax), and it sidesteps a Next.js complication: `useSearchParams()` in a client component requires a `<Suspense>` boundary to avoid de-opting the route from static rendering, which a plain `useState` toggle doesn't need.
+- **Stub delay set to 4s per attempt** (`CHECK_DELAY_MS`), with a 0.9s pause before the silent retry. Placeholder numbers — retune once real backend latency is known, per the mini-PRD's note that this affects whether the progress bar needs to show true percent-done (NN/g's >10s guidance) or a simpler animation suffices.
+- **Progress bar animates 0% → 92%** over the stub delay (a determinate CSS animation, not an indeterminate shimmer), intentionally stopping short of 100% so it never visually claims "done" before the stage actually transitions.
+- **Silent retry is truly silent:** no "retrying…" copy or visual state change is shown — the checking screen just keeps rotating its status messages and restarts the progress-bar fill. Only two outcomes are ever user-visible: success or (after both attempts fail) the failed state.
 
 ## Related docs
 
