@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MIN_LENGTH = 5;
 
@@ -42,6 +42,7 @@ export function CheckForm() {
   const [simulateMode, setSimulateMode] = useState<SimulateMode>("success");
   const [statusIndex, setStatusIndex] = useState(0);
   const [attemptKey, setAttemptKey] = useState(0);
+  const failedHeadingRef = useRef<HTMLHeadingElement>(null);
 
   // Runs the (stubbed) check: one silent retry on failure before giving up.
   useEffect(() => {
@@ -78,6 +79,13 @@ export function CheckForm() {
     return () => window.clearInterval(id);
   }, [stage]);
 
+  // Moves focus to the failure heading so screen readers announce it — this
+  // is a same-page state change, not a route change, so it wouldn't
+  // otherwise be picked up automatically.
+  useEffect(() => {
+    if (stage === "failed") failedHeadingRef.current?.focus();
+  }, [stage]);
+
   function handleCheck() {
     if (text.trim().length < MIN_LENGTH) {
       setShake(true);
@@ -91,6 +99,11 @@ export function CheckForm() {
   function handleReset() {
     setText("");
     setStage("input");
+  }
+
+  function handleRetry() {
+    setStatusIndex(0);
+    setStage("checking");
   }
 
   return (
@@ -265,26 +278,51 @@ export function CheckForm() {
         )}
 
         {stage === "failed" && (
-          <div className="border-outline-variant bg-surface-container-lowest rounded-xl border border-dashed p-8 text-center">
+          <div className="text-center">
             <div className="mb-stack-md flex justify-center">
               <span className="material-symbols-outlined text-tertiary text-[40px]">
                 error
               </span>
             </div>
-            <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-sm">
-              (Placeholder) Checking failed after retry
-            </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-stack-md">
-              This is where the real Analysis Failed screen goes, built next
-              — with a calm explanation and a Retry button. For now this
-              confirms the silent-retry-then-fail path works.
-            </p>
-            <button
-              onClick={handleReset}
-              className="border-outline text-on-surface hover:bg-surface-container-low rounded-xl border px-8 py-3 font-label-md text-label-md transition-all active:scale-95"
+            <h1
+              ref={failedHeadingRef}
+              tabIndex={-1}
+              className="font-headline-lg text-headline-lg text-on-surface mb-stack-sm outline-none"
             >
-              Start over
-            </button>
+              We couldn&apos;t check this right now
+            </h1>
+            <p className="font-body-lg text-body-lg text-on-surface-variant mx-auto mb-stack-lg max-w-md">
+              This isn&apos;t about your message — something went wrong on
+              our end. Please try again in a moment.
+            </p>
+            <div className="bg-surface-container-low mx-auto mb-stack-lg max-w-md rounded-lg p-stack-md text-left">
+              <p className="font-body-md text-body-md text-on-surface flex items-start gap-2">
+                <span className="material-symbols-outlined text-tertiary text-[18px]">
+                  lightbulb
+                </span>
+                <span>
+                  If you&apos;re worried, don&apos;t click any links or share
+                  personal information until you&apos;re able to try again.
+                </span>
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-stack-sm">
+              <button
+                onClick={handleRetry}
+                className="assurance-glow group relative inline-flex items-center justify-center gap-stack-md rounded-full bg-primary px-12 py-4 font-headline-md text-headline-md text-on-primary transition-all duration-300 hover:bg-primary-container active:scale-95"
+              >
+                <span>Try again</span>
+                <span className="material-symbols-outlined transition-transform group-hover:rotate-45">
+                  refresh
+                </span>
+              </button>
+              <button
+                onClick={handleReset}
+                className="text-on-surface-variant hover:text-primary font-label-sm text-label-sm underline transition-colors"
+              >
+                Start over instead
+              </button>
+            </div>
           </div>
         )}
       </div>

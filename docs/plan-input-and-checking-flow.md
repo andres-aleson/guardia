@@ -1,6 +1,6 @@
 # Execution Plan: Input & Checking Flow (B1–B3)
 
-**Status: Phase 1 (B1) and Phase 2 (B2) built and browser-verified. Awaiting approval to commit Phase 2.**
+**Status: Phases 1–3 (B1, B2, B3) built and browser-verified. Awaiting approval to commit Phase 3.**
 
 Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -45,16 +45,16 @@ Turns [Mini-PRD: Input & Checking Flow](./prd-input-and-checking-flow.md) into b
 
 📦 **Commit checkpoint:** B2 complete — holding for your review/approval before committing.
 
-## Phase 3 — B3: Analysis Failed Screen
+## Phase 3 — B3: Analysis Failed Screen ✅ (built, verified — commit pending your approval)
 
 Replaces the "(Placeholder) Checking failed after retry" state from Phase 2 with the real screen. (The success-path placeholder is out of scope here — it gets replaced separately whenever the C1–C3 Result screens are built, which is a different feature per the mini-PRD.)
 
-- [ ] Static UI: one generic, calm failure message, a fallback safety tip, and a Retry button — no jargon, no differentiating error types, per the mini-PRD.
-- [ ] Wire Retry to re-run the stub check against the *same* held input — no retyping required.
+- [x] Static UI: one generic, calm failure message ("We couldn't check this right now"), a fallback safety tip (don't click links / share info until you can retry), and a primary "Try again" button — no jargon, no differentiating error types, per the mini-PRD. Icon and tone match the amber/tertiary "caution, not alarm" language already used elsewhere, not red.
+- [x] Wired "Try again" to re-run the exact same stub-check logic Phase 2 built (`setStage("checking")`), which reuses the still-held `text` and `simulateMode` state — no retyping, no new logic needed. Added a secondary, less prominent "Start over instead" text link for the rarer case someone wants to reconsider what they submitted rather than just retry it.
 
-🧪 **Test checkpoint:** Force repeated failures to actually land on B3. Confirm the copy reads calm, not alarming. Confirm Retry re-attempts without losing the original input, and that a subsequent successful retry proceeds correctly.
+🧪 **Test checkpoint — done:** Forced repeated failures ("Always fail" mode) to land on B3; copy reads calm, not alarming. Clicked "Try again" — correctly re-entered the checking screen and (since the simulate mode was still "always fail") correctly landed back on B3 a second time, proving retry re-runs against the same input without needing it re-typed. "Start over instead" correctly clears the textarea back to a blank input screen. No console errors; `tsc --noEmit`, `next lint`, and `next build` all clean.
 
-📦 **Commit checkpoint:** B3 complete.
+📦 **Commit checkpoint:** B3 complete — holding for your review/approval before committing.
 
 ## Phase 4 — End-to-end pass
 
@@ -83,6 +83,11 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Stub delay set to 4s per attempt** (`CHECK_DELAY_MS`), with a 0.9s pause before the silent retry. Placeholder numbers — retune once real backend latency is known, per the mini-PRD's note that this affects whether the progress bar needs to show true percent-done (NN/g's >10s guidance) or a simpler animation suffices.
 - **Progress bar animates 0% → 92%** over the stub delay (a determinate CSS animation, not an indeterminate shimmer), intentionally stopping short of 100% so it never visually claims "done" before the stage actually transitions.
 - **Silent retry is truly silent:** no "retrying…" copy or visual state change is shown — the checking screen just keeps rotating its status messages and restarts the progress-bar fill. Only two outcomes are ever user-visible: success or (after both attempts fail) the failed state.
+
+**Phase 3 (B3):**
+- **Added a secondary "Start over instead" text link** below the primary "Try again" button — not explicitly called for in the mini-PRD, but without it, someone who wants to reconsider or edit what they submitted (rather than retry the exact same text) would have no way back to the input screen. Kept deliberately small/secondary so "Try again" stays the one clear recommended action, per the "one recommendation at a time" design principle.
+- **Added focus management on arrival at B3:** the heading receives programmatic focus when the stage changes to "failed," since this is a same-page state transition (not a route change) and would otherwise go unannounced to screen reader users. Same reasoning as the `role="alert"` addition in Phase 1 — this is the single most anxiety-loaded moment in the flow for this persona, so it gets an accessibility bar slightly above copy-paste-minimum.
+- **No new failure-type differentiation added**, even though a real backend will eventually have distinguishable errors (timeout vs. service error vs. rate limit, etc.) — confirms the mini-PRD's decision to keep this screen deliberately generic.
 
 ## Related docs
 
