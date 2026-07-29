@@ -1,6 +1,6 @@
 # Execution Plan: Analysis & Result Flow (C1–C3)
 
-**Status: Phase 1 (backend) built and self-verified — holding for your review before commit.**
+**Status: Phase 1 (backend) built, verified, and committed. Phase 2 (C1–C3 UI) not started.**
 
 Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -22,7 +22,7 @@ Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) int
 - PRD decisions already locked in (`PRD.md` §3): Gemini 2.5 Flash via free-tier Google AI Studio, stateless server-side handling, model self-reports the verdict (no external confidence threshold).
 - No SQLite persistence in this feature either — same as B1–B3, per the mini-PRD.
 
-## Phase 1 — Backend: real analysis endpoint ✅ (built, self-verified — pending your approval)
+## Phase 1 — Backend: real analysis endpoint ✅ (built, verified, committed)
 
 - [x] Added the `@google/genai` dependency (approved its and a couple of transitive packages' postinstall scripts, same pattern as `better-sqlite3` earlier).
 - [x] Added `GEMINI_API_KEY` to a new `.env.local` (confirmed `.env*` is already gitignored before writing the key to disk).
@@ -38,9 +38,7 @@ Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) int
 - A short, out-of-context friendly text ("still on for lunch tomorrow?") → `not-sure`, with a reasonable explanation (no way to confirm sender identity) — a good sign the model isn't just pattern-matching for scary keywords.
 - Also confirmed the 400 validation path (missing `text` field) and a clean `tsc --noEmit` / `next lint` / `next build`, including seeing `/api/check` show up correctly as a dynamic route in the build output.
 
-**Take a look at the four responses above (or run your own via `curl localhost:3000/api/check`) and let me know if the verdicts/tone feel right before I commit.**
-
-📦 **Commit checkpoint:** backend route + schema — holding for your approval.
+📦 **Commit checkpoint:** backend route + schema — committed.
 
 ## Phase 2 — Build C1, C2, C3 (static UI, mock data)
 
