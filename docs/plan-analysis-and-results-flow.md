@@ -1,6 +1,6 @@
 # Execution Plan: Analysis & Result Flow (C1–C3)
 
-**Status: Phase 1-3 built, verified, and committed. Phase 4 (end-to-end pass) not started.**
+**Status: Feature complete. All four phases (backend, C1–C3 UI, real-backend wiring, end-to-end pass) built, verified, and committed.**
 
 Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -73,15 +73,19 @@ Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) int
 
 📦 **Commit checkpoint:** real backend wired end-to-end — committed.
 
-## Phase 4 — End-to-end pass
+## Phase 4 — End-to-end pass ✅ (done, verified, committed)
 
-- [ ] Full click-through: B1 → B2 (real call) → C1/C2/C3, and the B2 → B3 → retry path, all in one continuous session.
-- [ ] Accessibility pass on C1–C3: focus management on arrival (same pattern as B3), screen-reader labels, contrast check — using the same computed WCAG method as the B1–B3 audit, not eyeballing it.
-- [ ] Confirm no regressions to B1–B3 or the landing page, and that build/lint/type-check are still clean.
+- [x] Full click-through, real landing-page CTA → `/check` → real API calls for both a risky message (C1) and a safe message (C2), each done twice, plus a free-text call description (also correctly routed risky) — confirming the call-description input path still works end-to-end with the real backend.
+- [x] B2 → B3 → retry path exercised three separate ways with real, distinct failure causes (not simulated): a genuine upstream 503 (during Phase 3's testing), a deliberately invalid API key, and — unplanned — genuinely exhausting Gemini's free-tier daily quota mid-audit. All three landed cleanly on B3 with no crash; "Try again" correctly re-invoked the same real call.
+- [x] Accessibility pass: keyboard tab-order enumeration on `/check` (natural order, no traps, textarea has a proper accessible name) and on `/dev/results` (same, plus confirmed the Result heading is `tabIndex={-1}` — intentionally excluded from Tab order, only reachable via the programmatic focus-on-arrival, exactly like B3). Confirmed the heading's focus-ring className is byte-identical to B3's already-verified `focus:ring-2 focus:ring-primary focus:outline-none` pattern; the same testing-environment limitation from the original B1–B3 audit applies here too (`document.hasFocus()` is `false` in this automated tab, so the ring never visually renders in this environment even though it's wired correctly) — not re-litigated since it's the same proven utility classes, not new CSS.
+- [x] Contrast already computed in Phase 2 for every new color pairing on C1–C3 (lowest 6.1:1, comfortably above the 4.5:1 AA minimum) — no new colors introduced in Phase 3 or 4, so no re-audit needed.
+- [x] Confirmed no regressions: no console errors on the landing page or `/check` across the whole session, and a clean `tsc --noEmit`, `next lint`, and `next build`.
 
-🧪 **Test checkpoint:** walk the entire flow start to finish, both happy and failure paths, in one continuous session.
+🧪 **Test checkpoint — done (by me, holding for your review):** see above — this ended up being an unusually thorough real-world test of the failure path, since I hit three different genuine failure causes without trying to.
 
-📦 **Commit checkpoint:** feature complete.
+**Important operational finding, not a bug:** Gemini's free tier caps `gemini-2.5-flash` at **20 requests per day**. Between Phases 1–4's testing this session, we used up the day's quota, which is how the quota-exhaustion B3 test above happened. Worth knowing before you demo this yourself today — it'll reset, but 20/day is a tight ceiling even for solo testing, let alone anyone else trying it. No code change needed for this pass (already logged as a known v1 tradeoff in `PRD.md` §3), just flagging it since we hit it directly.
+
+📦 **Commit checkpoint:** feature complete — committed.
 
 ## Decisions log
 
@@ -103,7 +107,9 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Progress bar duration is now a rough estimate (3s), not a real countdown**, since actual Gemini latency varies — the animation approaches 92% and holds there via `animation-fill-mode: forwards` if the real call runs long, so it never looks broken or falsely claims completion.
 
 **Phase 4:**
-_(pending)_
+- **Tested the B3 failure path against real, distinct causes** (upstream 503, invalid key, exhausted quota) rather than only relying on simulated failures, since Phase 3 had already removed the simulate toggle — this ended up being more rigorous coverage than a synthetic test would have given.
+- **Didn't re-derive the compiled CSS for the focus ring from scratch** the way the original B1–B3 audit did, since the className on `ResultScreen`'s heading is identical to B3's already-verified one — re-checking would have been redundant, not more rigorous.
+- **Discovered the free tier's 20-requests/day cap on `gemini-2.5-flash` firsthand** (see the note in the Phase 4 section above) — already a known tradeoff per `PRD.md` §3, but worth surfacing concretely now that it's been hit rather than just theorized.
 
 ## Related docs
 
