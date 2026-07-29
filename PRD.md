@@ -79,7 +79,9 @@ The mockup's Result screen has a "Back to dashboard" link, implying persistence.
 - Static content for F2/F3 can simply be bundled with the app, not per-user data.
 
 **Server-side (only what's needed to run the check):**
-- The message content must be sent to a backend/LLM to be analyzed. **Decision needed:** is that request processed statelessly (not persisted after the response), or logged for abuse-prevention/model-improvement? The mockup's own copy claims "Zero-Data Logging" — if any server-side retention happens, that claim needs to change or the retention needs to be minimized/anonymized and disclosed in F5.
+- The message content is sent to an LLM to be analyzed, via a server-side API route (the API key never reaches the client). **Resolved:** the request is stateless — nothing about the submitted text or the verdict is persisted server-side after the response is returned. This is what makes the mockup's "Zero-Data Logging" copy true rather than aspirational, with one caveat: the LLM provider has its own data-handling terms independent of what Guardia itself stores, which needs a short disclosure in F5 once that's written.
+- **v1 model/provider:** Gemini 2.5 Flash via a free-tier Google AI Studio API key. Chosen purely because this is an unfunded prototype — free-tier rate limits are tight enough that a real product would likely need a paid tier or a different provider, but the API route is a thin enough wrapper that swapping later is a config change, not a rewrite.
+- **Resolved (verdict thresholds, was open question):** rather than the analysis returning a numeric confidence score that gets bucketed externally, the model is prompted to choose the safe/risky/not-sure verdict itself, with "not-sure" framed as a legitimate first-class answer it should prefer over guessing. Self-reported confidence scores from LLMs aren't reliably calibrated, so an external numeric threshold would be a false sense of precision.
 - No account system in v1 means no server-side history — history lives only on the user's device (lost on uninstall/device loss unless a future version adds optional encrypted sync).
 - Optional, aggregated, content-free analytics (e.g., count of checks run, verdict distribution) for product metrics — never raw message content.
 
@@ -87,9 +89,9 @@ The mockup's Result screen has a "Back to dashboard" link, implying persistence.
 
 1. **Accounts vs. fully anonymous.** Local-only history is simpler and more private but disappears if the user gets a new phone. Is that acceptable for v1, or does cross-device history matter enough to justify a login screen (which adds friction for this persona)?
 2. **Trusted Contact feature (D2).** In scope for v1, or deferred? Your user stories emphasize *not* needing to ask family for routine checks — D2 as proposed only appears after an escalation, which preserves that. Confirm this framing before building it.
-3. **Backend retention policy for analyzed messages.** Needs an explicit answer to write accurate copy for F5/Privacy Policy and to honor the "Zero-Data Logging" claim already sitting in the marketing mockup.
-4. **Verdict thresholds for C3 ("Not Sure").** Product/ML question: what confidence range routes to "Not Sure" instead of forcing Safe/Risky? Affects both the analysis logic and how often users see a non-committal answer (too often erodes trust in the tool).
-5. **Landing screen (A1):** keep the mockup's full marketing layout, or simplify to match the calmer one-button version described in your happy path? They currently conflict.
+3. **Landing screen (A1):** keep the mockup's full marketing layout, or simplify to match the calmer one-button version described in your happy path? They currently conflict.
+
+*(Backend retention policy and C3 verdict-threshold questions from earlier drafts are resolved — see §3.)*
 
 ## 5. Out of scope for v1 (candidates to defer)
 
