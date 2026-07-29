@@ -1,6 +1,6 @@
 # Execution Plan: Analysis & Result Flow (C1–C3)
 
-**Status: Phase 1 (backend) built, verified, and committed. Phase 2 (C1–C3 UI) not started.**
+**Status: Phase 1 (backend) and Phase 2 (C1–C3 UI) built, verified, and committed. Phase 3 (wire B2 to the real backend) not started.**
 
 Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -40,17 +40,20 @@ Turns [Mini-PRD: Analysis & Result Flow](./prd-analysis-and-results-flow.md) int
 
 📦 **Commit checkpoint:** backend route + schema — committed.
 
-## Phase 2 — Build C1, C2, C3 (static UI, mock data)
+## Phase 2 — Build C1, C2, C3 (static UI, mock data) ✅ (built, verified, committed)
 
-- [ ] Build C1 (Risky): verdict, explanation, red-flag list, one guided next step, safe-alternative action, "Got it."
-- [ ] Build C2 (Safe): reassuring verdict, brief plain-language reason, "Got it."
-- [ ] Build C3 (Not Sure): manual-verification recommendation in place of a verdict, "Got it."
-- [ ] Build the placeholder screen C1's escalation button links to (D1 doesn't exist yet) — same bare-placeholder pattern already used for B2's original success stub.
-- [ ] Make all three screens reachable with local mock data for now (no backend wiring yet) — extend the existing dev-only preview pattern from B1/B2 so each can be pulled up on demand for review.
+- [x] Built C1 (Risky): verdict, explanation, red-flag list, one guided-next-step card, "Got it," escalation link — see 🤔 note below on the "safe-alternative action" bullet from the mini-PRD.
+- [x] Built C2 (Safe): reassuring verdict, brief plain-language reason, "Got it" — deliberately lightweight, no red-flag panel or card treatment.
+- [x] Built C3 (Not Sure): manual-verification recommendation in a highlighted card in place of a verdict, "Got it," no red-flag panel or escalation link.
+- [x] Built the placeholder screen C1's escalation button links to (`EscalationPlaceholder`) — same bare, dashed-border, "(Placeholder)" pattern already used for B2's original success stub.
+- [x] Built a dev-only preview route (`/dev/results`, not linked from anywhere in the real app) with a toggle bar — same visual pattern as B1/B2's "Dev preview" box — so all three verdicts plus the escalation placeholder can be reviewed with mock data before Phase 3 wires up anything real.
+- [x] Added the same focus-management pattern from B3 (`ResultScreen`'s heading gets programmatic focus whenever the verdict changes), since this is a same-page state transition that would otherwise go unannounced to screen readers.
 
-🧪 **Test checkpoint:** look at all three screens plus the escalation placeholder in the browser — copy tone, layout, "Got it" resetting back to a fresh B1 — before wiring them to anything real.
+🤔 **Decision point — resolved:** the master PRD's C1 description calls for a distinct "Safe Alternative" action (e.g. "official site/number"). Our backend schema doesn't return a separate structured field for that — only a single `recommendedAction` string — and in testing during Phase 1, the model already naturally folds safe-alternative-style guidance into that one field (e.g. "contact your bank directly using a number from your card"). I didn't add a second, separate CTA/button for this: having Gemini generate a specific clickable "official" link or phone number as its own actionable UI element carries real hallucination risk — a wrong-but-confident official-looking link or number would be actively harmful to hand to this persona, which is the same reasoning that ruled out OCR earlier. One unified "What to do next" card covers the same guidance more safely. Flagging this in case you want it revisited, since it's a deliberate deviation from the PRD's literal wording, not an oversight.
 
-📦 **Commit checkpoint:** C1–C3 UI, once verified.
+🧪 **Test checkpoint — done (by me, holding for your review):** viewed all three verdicts plus the escalation placeholder at `/dev/results` in the browser. Confirmed: C1 shows the amber warning icon, explanation, red-flag list, and guided-next-step card, and its own "I've already clicked or responded to this" link correctly hands off to the placeholder (not just the dev toggle bar's separate button). C2 renders as the lighter-weight reassurance screen. C3 shows its "How to check for sure" card. Heading focus-on-arrival confirmed via `document.activeElement`. Computed WCAG contrast on every new color pairing (red-flag card text, warning icon, guided-next-step card) — all comfortably pass AA (lowest ratio 6.1:1 against a 4.5:1 minimum). No console errors on the preview page or the landing page (regression check). `tsc --noEmit`, `next lint`, and `next build` all clean; `/dev/results` and `/api/check` both show up correctly in the build's route list.
+
+📦 **Commit checkpoint:** C1–C3 UI — committed.
 
 ## Phase 3 — Wire B2 to the real backend
 
@@ -84,7 +87,9 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Route returns a generic 502 on any analysis failure** (network error, schema-validation failure, etc.) with no differentiation by cause, deliberately mirroring B3's existing "one generic message" decision rather than inventing new granular error states this early.
 
 **Phase 2:**
-_(pending)_
+- **Made "Got it" the primary button on C1, and "I've already clicked or responded" a smaller secondary text link beneath it** — the opposite visual hierarchy from the original mockup, which gave the escalation button equal or greater prominence. Most users land on C1 without having acted on the message yet, so the primary path should be the one that applies to most people, consistent with the "one recommendation at a time" design principle and the same primary/secondary pattern already used on B3 ("Try again" / "Start over instead").
+- **`/dev/results` will likely be removed or repurposed once Phase 3 wires the real flow into `check-form.tsx`**, at which point the real C1–C3 screens become reachable through the actual app and this standalone preview route stops pulling its weight. Not deleting it yet since it's still useful for isolated review; revisit at the end of Phase 3.
+- **No decorative stock photo**, unlike the original Stitch mockup (which included a hosted background image in C1's sidebar) — matches the precedent already set on the landing page and B1 of dropping marketing chrome that doesn't serve the single primary action, and avoids a build-time dependency on an external image host.
 
 **Phase 3:**
 _(pending)_
