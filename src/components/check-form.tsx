@@ -1,13 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { AnalysisResult } from "@/lib/analyze";
+import { ResultScreen } from "./result-screen";
+import { EscalationPlaceholder } from "./escalation-placeholder";
 
 const MIN_LENGTH = 5;
 
-// Stub timing — stands in for a real analysis call until the backend lands (see docs/plan-input-and-checking-flow.md, Phase 2).
-const CHECK_DELAY_MS = 4000;
 const RETRY_DELAY_MS = 900;
 const MESSAGE_INTERVAL_MS = 1100;
+
+// The progress bar's fill is a reassurance cue, not a literal countdown — we
+// don't know real latency in advance. It animates toward 92% over this
+// estimate and holds there (animation-fill-mode: forwards) if the real
+// request takes longer, so it never falsely claims "done" early.
+const PROGRESS_ANIMATION_MS = 3000;
 
 const STATUS_MESSAGES = [
   "Connecting to safety database…",
@@ -17,34 +24,24 @@ const STATUS_MESSAGES = [
   "Finalizing report…",
 ];
 
-type Stage = "input" | "checking" | "success" | "failed";
-type SimulateMode = "success" | "fail-once" | "fail-always";
+type Stage = "input" | "checking" | "result" | "escalation" | "failed";
 
 function wait(ms: number) {
   return new Promise<void>((resolve) => window.setTimeout(resolve, ms));
-}
-
-function runStubCheck(mode: SimulateMode, attemptNumber: 1 | 2): Promise<void> {
-  return new Promise((resolve, reject) => {
-    window.setTimeout(() => {
-      const shouldFail =
-        mode === "fail-always" || (mode === "fail-once" && attemptNumber === 1);
-      if (shouldFail) reject(new Error("Simulated check failure"));
-      else resolve();
-    }, CHECK_DELAY_MS);
-  });
 }
 
 export function CheckForm() {
   const [text, setText] = useState("");
   const [stage, setStage] = useState<Stage>("input");
   const [shake, setShake] = useState(false);
-  const [simulateMode, setSimulateMode] = useState<SimulateMode>("success");
   const [statusIndex, setStatusIndex] = useState(0);
   const [attemptKey, setAttemptKey] = useState(0);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
+    null,
+  );
   const failedHeadingRef = useRef<HTMLHeadingElement>(null);
 
-  // Runs the (stubbed) check: one silent retry on failure before giving up.
+  // Runs the real analysis check: one silent retry on failure before giving up.
   useEffect(() => {
     if (stage !== "checking") return;
     let cancelled = false;
@@ -52,8 +49,19 @@ export function CheckForm() {
     async function attempt(n: 1 | 2) {
       setAttemptKey((k) => k + 1);
       try {
-        await runStubCheck(simulateMode, n);
-        if (!cancelled) setStage("success");
+        const response = await fetch("/api/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        if (!response.ok) {
+          throw new Error(`Analysis request failed (${response.status})`);
+        }
+        const result = (await response.json()) as AnalysisResult;
+        if (!cancelled) {
+          setAnalysisResult(result);
+          setStage("result");
+        }
       } catch {
         if (n === 1) {
           await wait(RETRY_DELAY_MS);
@@ -68,7 +76,7 @@ export function CheckForm() {
     return () => {
       cancelled = true;
     };
-  }, [stage, simulateMode]);
+  }, [stage, text]);
 
   // Rotates the calm status copy while checking.
   useEffect(() => {
@@ -98,6 +106,7 @@ export function CheckForm() {
 
   function handleReset() {
     setText("");
+    setAnalysisResult(null);
     setStage("input");
   }
 
@@ -128,34 +137,6 @@ export function CheckForm() {
                 call you weren&apos;t sure about. We&apos;ll explain what we
                 find in plain language.
               </p>
-            </div>
-
-            <div className="border-outline-variant bg-surface-container-low mb-stack-lg rounded-xl border border-dashed p-stack-md">
-              <p className="font-label-sm text-label-sm text-on-surface-variant mb-stack-sm">
-                Dev preview — no analysis backend yet, so simulate the
-                result:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {(
-                  [
-                    { mode: "success", label: "Success" },
-                    { mode: "fail-once", label: "Fail once (auto-retries)" },
-                    { mode: "fail-always", label: "Always fail" },
-                  ] as { mode: SimulateMode; label: string }[]
-                ).map(({ mode, label }) => (
-                  <button
-                    key={mode}
-                    onClick={() => setSimulateMode(mode)}
-                    className={`rounded-full border px-4 py-1.5 font-label-sm text-label-sm transition-all active:scale-95 ${
-                      simulateMode === mode
-                        ? "bg-primary text-on-primary border-primary"
-                        : "border-outline-variant text-on-surface-variant hover:border-primary bg-surface"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div
@@ -231,7 +212,7 @@ export function CheckForm() {
                   key={attemptKey}
                   className="bg-primary h-full rounded-full"
                   style={{
-                    animation: `progress-fill ${CHECK_DELAY_MS}ms linear forwards`,
+                    animation: `progress-fill ${PROGRESS_ANIMATION_MS}ms linear forwards`,
                   }}
                 />
               </div>
@@ -253,28 +234,16 @@ export function CheckForm() {
           </div>
         )}
 
-        {stage === "success" && (
-          <div className="border-outline-variant bg-surface-container-lowest rounded-xl border border-dashed p-8 text-center">
-            <div className="mb-stack-md flex justify-center">
-              <span className="material-symbols-outlined text-secondary text-[40px]">
-                task_alt
-              </span>
-            </div>
-            <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-sm">
-              (Placeholder) Check complete
-            </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-stack-md">
-              In the real app, a Result screen (Safe / Risky / Not Sure)
-              appears here — that&apos;s a later phase. For now this
-              confirms the checking flow completed successfully.
-            </p>
-            <button
-              onClick={handleReset}
-              className="border-outline text-on-surface hover:bg-surface-container-low rounded-xl border px-8 py-3 font-label-md text-label-md transition-all active:scale-95"
-            >
-              Start over
-            </button>
-          </div>
+        {stage === "result" && analysisResult && (
+          <ResultScreen
+            result={analysisResult}
+            onGotIt={handleReset}
+            onEscalate={() => setStage("escalation")}
+          />
+        )}
+
+        {stage === "escalation" && (
+          <EscalationPlaceholder onBack={() => setStage("result")} />
         )}
 
         {stage === "failed" && (
