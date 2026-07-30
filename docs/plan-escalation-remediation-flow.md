@@ -1,6 +1,6 @@
 # Execution Plan: Escalation & Remediation Flow (D1)
 
-**Status: Phase 1-2 built, verified, and committed. Phase 3 (step wizard + closing screen) not started.**
+**Status: Phase 1-3 built, verified, and committed. Phase 4 (wire to C1 + end-to-end pass) not started.**
 
 Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -44,21 +44,24 @@ Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flo
 
 📦 **Commit checkpoint:** triage screen — committed.
 
-## Phase 3 — Build the step wizard + closing screen
+## Phase 3 — Build the step wizard + closing screen ✅ (built, verified, committed)
 
-- [ ] Build the one-step-at-a-time wizard (Next / Back) driven by Phase 1's content and ordering function, using Phase 2's triage answers.
-- [ ] Build the closing screen: nudge toward D2, with a link to a new bare placeholder (`TrustedContactPlaceholder`) — same pattern `EscalationPlaceholder` used for D1 until now.
-- [ ] Wire all of this together behind `/dev/escalation`, so the full triage → steps → closing flow can be reviewed with different answer combinations before touching C1.
+- [x] Built the one-step-at-a-time wizard (`RemediationWizard`, Next/Back), driven by Phase 1's content and ordering function and Phase 2's triage answers. Shows "Step N of M"; "Back" only appears after the first step; the button reads "Continue" instead of "Next" on the final step.
+- [x] Built the closing screen (`EscalationClosing`): the "you don't have to handle this alone" message with a single primary "Done" button. (Originally also had a "Notify a trusted contact" button leading to a D2 placeholder — removed per your feedback partway through this phase; see Decisions Log.)
+- [x] Built `EscalationFlow`, an orchestrator component composing triage → wizard → closing behind a single `onDone` callback — built so Phase 4 can drop it straight into `check-form.tsx` in place of `EscalationPlaceholder` with no restructuring.
+- [x] Replaced `/dev/escalation`'s temporary placeholder-echo with the real `EscalationFlow`, so the whole flow can be reviewed end to end with different answer combinations.
 
-🧪 **Test checkpoint:** walk the full flow at `/dev/escalation` a few times with different triage selections — a single selection, multiple selections, and "not sure" — confirming step order and content match each case, Back/Next both work, and the closing screen's D2 link lands on the placeholder.
+🧪 **Test checkpoint — done (by me):** walked the full flow at `/dev/escalation` twice — once with two selections (money + password, correctly assembled as 3 steps in urgency order: money → password → monitor), once with "not sure" (correctly assembled as all 5 steps, money first). Confirmed Back/Next navigate correctly and preserve position, the final step's button reads "Continue," and "Done" completes the flow. Keyboard tab order is clean with each step's heading correctly excluded (focus-only, same pattern as everywhere else). No console errors on `/dev/escalation` or regression on `/check`; clean `tsc`/`lint`/`build`.
 
-📦 **Commit checkpoint:** wizard + closing screen, once verified.
+**Post-checkpoint change (still Phase 3, before commit):** removed the closing screen's "Notify a trusted contact" button and the D2 placeholder it led to, per your direct feedback — see Decisions Log. The closing screen keeps its supportive message, now with a single primary "Done" button. Re-verified: full flow (money+password and "not sure" cases) still completes correctly end to end, `tsc`/`lint`/`build` clean, no console errors.
+
+📦 **Commit checkpoint:** wizard + closing screen — committed.
 
 ## Phase 4 — Wire to C1 + end-to-end pass
 
 - [ ] Replace `check-form.tsx`'s `"escalation"` stage — currently rendering `EscalationPlaceholder` — with the real flow built in Phases 2–3.
 - [ ] Remove the now-unused `EscalationPlaceholder` component and the stale "Escalation placeholder" mode in `/dev/results` (superseded by `/dev/escalation`), so nothing in the app still points to placeholder copy claiming D1 isn't built.
-- [ ] Full click-through: C1 (real risky verdict) → escalate → triage → steps → closing → D2 placeholder → done → back to a fresh B1.
+- [ ] Full click-through: C1 (real risky verdict) → escalate → triage → steps → closing → done → back to a fresh B1.
 - [ ] Accessibility pass: keyboard order through checkboxes and Next/Back, focus management on each step transition (same "move focus to heading" pattern already used on B3 and the C-screens), computed WCAG contrast on any new elements.
 - [ ] Regression check: landing page, B1–B3, C1–C3 (safe/not-sure verdicts untouched by this feature), clean `tsc`/`lint`/`build`.
 
@@ -82,7 +85,9 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Added focus-on-arrival now instead of deferring to Phase 4**, since Phase 3 (B1–B3) already established this exact pattern and it costs nothing to apply consistently as each new screen is built, rather than retrofitting it later.
 
 **Phase 3:**
-_(pending)_
+- **Removed the "Notify a trusted contact" button and D2 entirely, per your direct feedback** after the first version of this phase was reviewed: contacting a family member or friend doesn't need an in-app feature to do it for them, and building one risks a patronizing, unearned assumption about this persona's capability (your words: "it's not like older adults don't know how to contact their family members or friends"). The closing screen keeps its supportive text; "Done" is now the only, primary button. `TrustedContactPlaceholder` was deleted rather than left as dead code. Recorded as standing guidance for future features aimed at this persona, not just a one-off tweak — see the project memory this produced.
+- **Built `EscalationFlow` as a single self-contained orchestrator now**, rather than leaving the triage/wizard/closing wiring to happen ad hoc in Phase 4 — means Phase 4 is a pure swap (`EscalationPlaceholder` → `EscalationFlow`) inside `check-form.tsx`, not new orchestration logic.
+- **`/dev/escalation`'s temporary "Continue" restart uses a `key` prop to remount `EscalationFlow`** rather than adding a reset method to the component itself — keeps `EscalationFlow` simple (no reset concept needed in the real app either, since a fresh check always mounts a fresh instance).
 
 **Phase 4:**
 _(pending)_

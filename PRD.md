@@ -47,7 +47,7 @@ The mockup only shows the "risky" case. The happy path implies at least two more
 | # | Screen | Purpose |
 |---|--------|---------|
 | D1 | **"I Already Clicked/Responded" Screen (new)** | Triggered from the Result screen's escalation button. Same calm, judgment-free tone. Step-by-step remediation (e.g., change the password, call the bank, watch statements) — one step visible at a time, not a checklist wall. This is the single most important screen for a Vulnerable Decision-Maker who has already been scammed and is now anxious/ashamed — it must not exist only as a dead-end button in the mockup. |
-| D2 | **Notify a Trusted Contact (optional, new — needs a decision, see §4)** | Only reachable from D1. Lets the user optionally loop in a pre-configured family member/trusted contact after something has already gone wrong (not for routine checks — that would undercut the "without handing the decision to someone else" goal from your user stories). |
+| D2 | ~~Notify a Trusted Contact~~ (cut) | Was proposed as an in-app feature reachable from D1 to loop in a family member/trusted contact after something went wrong. Cut during D1's build: contacting someone directly (call, text) doesn't need an in-app feature to do it for them, and building one risks a patronizing assumption about this persona's capability. D1's closing screen keeps a supportive text reminder instead, with no in-app mechanism. |
 
 ### E. History
 
@@ -88,10 +88,9 @@ The mockup's Result screen has a "Back to dashboard" link, implying persistence.
 ## 4. Open questions / decisions needed before build
 
 1. **Accounts vs. fully anonymous.** Local-only history is simpler and more private but disappears if the user gets a new phone. Is that acceptable for v1, or does cross-device history matter enough to justify a login screen (which adds friction for this persona)?
-2. **Trusted Contact feature (D2).** In scope for v1, or deferred? Your user stories emphasize *not* needing to ask family for routine checks — D2 as proposed only appears after an escalation, which preserves that. Confirm this framing before building it.
-3. **Landing screen (A1):** keep the mockup's full marketing layout, or simplify to match the calmer one-button version described in your happy path? They currently conflict.
+2. **Landing screen (A1):** keep the mockup's full marketing layout, or simplify to match the calmer one-button version described in your happy path? They currently conflict.
 
-*(Backend retention policy and C3 verdict-threshold questions from earlier drafts are resolved — see §3.)*
+*(Backend retention policy and C3 verdict-threshold questions from earlier drafts are resolved — see §3. The Trusted Contact/D2 question is resolved — cut, see §2.)*
 
 ## 5. Out of scope for v1 (candidates to defer)
 
