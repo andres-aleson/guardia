@@ -1,6 +1,6 @@
 # Execution Plan: Escalation & Remediation Flow (D1)
 
-**Status: Not started.**
+**Status: Phase 1 (content + branching logic) built, verified, and committed. Phase 2 (triage screen) not started.**
 
 Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -21,15 +21,17 @@ Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flo
 - No SQLite persistence anywhere in the app yet — this feature doesn't change that either, per the mini-PRD.
 - Design tokens, calm/judgment-free tone, and the "one thing at a time" wizard-style pattern are already established (B2's checking screen, B3, C1–C3) — reuse as-is.
 
-## Phase 1 — Static remediation content + branching logic (no UI yet)
+## Phase 1 — Static remediation content + branching logic (no UI yet) ✅ (built, verified, committed)
 
-- [ ] Write the static, pre-reviewed step content as data (not JSX) for each category: money sent/gift card, passwords/credentials, financial/SSN info, device safety, general monitor & report.
-- [ ] Write the selection/ordering function: given a set of triage answers (or "not sure"), returns the relevant steps in urgency order (money/gift cards → credentials → device safety → monitor & report).
-- [ ] Write the closing step's content (the nudge toward telling a trusted contact / D2).
+- [x] Wrote the static, pre-reviewed step content as data (`src/lib/remediation-steps.ts`, not JSX) for each category: money sent/gift card, financial/SSN info, passwords/credentials, device safety, general monitor & report.
+- [x] Wrote the selection/ordering function (`getRemediationSteps`): given a set of triage answers (or "not sure"/empty), returns the relevant steps in urgency order. Slotted financial/SSN in right after money/gift-card in the ordering (the mini-PRD didn't pin down exactly where it goes) — see Decisions Log.
+- [x] Wrote the closing step's content (`CLOSING_STEP`) — the nudge toward telling a trusted contact / D2.
 
-🤔 **Decision point:** this is safety-critical, user-facing copy (real guidance for someone who may have just been scammed) — worth a genuine content review together, not just a code review. I'll write the actual step wording out for you to read before anything is wired into a screen.
+🤔 **Decision point — resolved:** reviewed the actual step wording together before wiring anything into a screen. Approved as-is.
 
-📦 **Commit checkpoint:** content + branching logic, once you're happy with the wording.
+🧪 **Verified (by me):** ran the branching logic against six scenarios (single selection, multiple selections, "not sure", empty selection, and both device-safety-triggering options individually) — ordering, deduplication, and the always-included closing "monitor & report" step all behaved correctly. `tsc --noEmit` and `eslint` both clean.
+
+📦 **Commit checkpoint:** content + branching logic — committed.
 
 ## Phase 2 — Build the triage question screen
 
@@ -67,7 +69,10 @@ Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flo
 _(Anything decided during execution that isn't already captured in the mini-PRD.)_
 
 **Phase 1:**
-_(pending)_
+- **Financial/SSN slotted in right after money/gift-card in urgency order**, ahead of passwords/credentials — the mini-PRD's stated order only explicitly covered money → credentials → device → monitor. Reasoning: fraud-alert/credit-freeze urgency for exposed financial or SSN info felt comparably time-sensitive to a gift-card/wire scam, more so than a compromised password.
+- **"monitor & report" is always included** as the closing step regardless of which categories were selected, rather than being its own checkbox — it's generic good advice that applies no matter what happened.
+- **Empty selection (Continue clicked with nothing checked) is treated identically to "not sure"** — shows the full step set rather than dead-ending or blocking submission, so there's no way to get stuck on the triage screen.
+- **Both "clicked a link but entered nothing" and "downloaded a file or app" map to the same single device-safety step**, not two separate steps — the guidance (stop, scan, watch for changes) is the same for both, and duplicating it would pad the sequence without adding anything.
 
 **Phase 2:**
 _(pending)_
