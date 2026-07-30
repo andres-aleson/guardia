@@ -1,6 +1,6 @@
 # Execution Plan: Escalation & Remediation Flow (D1)
 
-**Status: Phase 1 (content + branching logic) built, verified, and committed. Phase 2 (triage screen) not started.**
+**Status: Phase 1-2 built, verified, and committed. Phase 3 (step wizard + closing screen) not started.**
 
 Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -33,14 +33,16 @@ Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flo
 
 📦 **Commit checkpoint:** content + branching logic — committed.
 
-## Phase 2 — Build the triage question screen
+## Phase 2 — Build the triage question screen ✅ (built, verified, committed)
 
-- [ ] Build the multi-select triage screen: reassuring intro copy, checkboxes (entered a password / shared financial or SSN info / sent money or a gift card code / clicked a link but entered nothing / downloaded a file or app / not sure), "Continue" button.
-- [ ] Add a dev-only preview route (`/dev/escalation`) — same purpose as `/dev/results` — so this screen (and the rest of this feature as it's built) can be reviewed in isolation before it's wired into the real C1 hand-off.
+- [x] Built the multi-select triage screen (`src/components/escalation-triage.tsx`): reassuring intro copy, checkboxes (entered a password / shared financial or SSN info / sent money or a gift card code / clicked a link but entered nothing / downloaded a file or app / not sure), "Continue" button.
+- [x] "Not sure" is mutually exclusive with the other five — selecting it clears everything else, and selecting anything else clears "not sure" — so the state can never be contradictory.
+- [x] Added focus management on arrival (heading gets programmatic focus, `tabIndex={-1}`, same pattern as B3/ResultScreen) — added now rather than deferred to the Phase 4 audit, since it's the same one-line pattern already proven elsewhere.
+- [x] Added a dev-only preview route (`/dev/escalation`, `src/app/dev/escalation/page.tsx` + `src/components/dev-escalation-preview.tsx`) — same purpose and visual pattern as `/dev/results`, with a temporary placeholder echo of whatever was selected (Phase 3 doesn't exist yet).
 
-🧪 **Test checkpoint:** look at the triage screen at `/dev/escalation` — copy tone, checkbox behavior, "not sure" not blocking progress.
+🧪 **Test checkpoint — done (by me, holding for your review):** see the "How to check this yourself" note below for exact steps. I verified: checkbox toggling works individually and in combination; selecting "not sure" clears other selections and vice versa; "Continue" with zero selections doesn't block (shows "treated as not sure" on the placeholder echo); keyboard tab order is clean with the heading correctly excluded (`tabIndex -1`, focus-only); text contrast on the new cards is strong (15.6–17.2:1); no console errors on `/dev/escalation` or regression on `/check`; clean `tsc`/`lint`/`build`, with `/dev/escalation` showing up correctly as a route.
 
-📦 **Commit checkpoint:** triage screen, once verified.
+📦 **Commit checkpoint:** triage screen — committed.
 
 ## Phase 3 — Build the step wizard + closing screen
 
@@ -75,7 +77,9 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **Both "clicked a link but entered nothing" and "downloaded a file or app" map to the same single device-safety step**, not two separate steps — the guidance (stop, scan, watch for changes) is the same for both, and duplicating it would pad the sequence without adding anything.
 
 **Phase 2:**
-_(pending)_
+- **"Not sure" is mutually exclusive with the other options**, not additive — selecting it clears everything else and vice versa. Wasn't explicitly specified in the mini-PRD; chosen because "not sure" already means "show me everything" in the branching logic, so letting it coexist with specific selections would just be confusing UI state with no behavioral difference.
+- **Checkbox cards use large, full-row touch targets** (the whole card is a `<label>`, not just the small checkbox square) — consistent with the "large touch targets" design principle already applied elsewhere.
+- **Added focus-on-arrival now instead of deferring to Phase 4**, since Phase 3 (B1–B3) already established this exact pattern and it costs nothing to apply consistently as each new screen is built, rather than retrofitting it later.
 
 **Phase 3:**
 _(pending)_
