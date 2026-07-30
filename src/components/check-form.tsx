@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { AnalysisResult } from "@/lib/analyze";
 import { ResultScreen } from "./result-screen";
-import { EscalationPlaceholder } from "./escalation-placeholder";
+import { EscalationFlow } from "./escalation-flow";
 
 const MIN_LENGTH = 5;
 
@@ -242,9 +242,7 @@ export function CheckForm() {
           />
         )}
 
-        {stage === "escalation" && (
-          <EscalationPlaceholder onBack={() => setStage("result")} />
-        )}
+        {stage === "escalation" && <EscalationFlow onDone={handleReset} />}
 
         {stage === "failed" && (
           <div className="text-center">

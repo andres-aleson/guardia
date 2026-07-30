@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { AnalysisResult } from "@/lib/analyze";
 import { ResultScreen } from "./result-screen";
-import { EscalationPlaceholder } from "./escalation-placeholder";
 
 const MOCK_RESULTS: Record<"safe" | "risky" | "not-sure", AnalysisResult> = {
   safe: {
@@ -36,24 +36,29 @@ const MOCK_RESULTS: Record<"safe" | "risky" | "not-sure", AnalysisResult> = {
   },
 };
 
-type PreviewMode = "safe" | "risky" | "not-sure" | "escalation";
+type PreviewMode = "safe" | "risky" | "not-sure";
 
 const MODE_OPTIONS: { mode: PreviewMode; label: string }[] = [
   { mode: "risky", label: "C1 — Risky" },
   { mode: "safe", label: "C2 — Safe" },
   { mode: "not-sure", label: "C3 — Not Sure" },
-  { mode: "escalation", label: "Escalation placeholder" },
 ];
 
 export function DevResultsPreview() {
   const [mode, setMode] = useState<PreviewMode>("risky");
+  const router = useRouter();
 
   return (
     <main className="flex flex-grow flex-col items-center px-margin-mobile pt-24 pb-stack-lg md:px-margin-desktop">
       <div className="border-outline-variant bg-surface-container-low mb-stack-lg w-full max-w-3xl rounded-xl border border-dashed p-stack-md">
         <p className="font-label-sm text-label-sm text-on-surface-variant mb-stack-sm">
           Dev preview — not linked from the real app. Lets us review C1/C2/C3
-          with mock data before Phase 3 wires up the real flow.
+          with mock data without spending real API quota. For the escalation
+          flow (D1), see{" "}
+          <code className="bg-surface-container-high rounded px-1">
+            /dev/escalation
+          </code>
+          .
         </p>
         <div className="flex flex-wrap gap-2">
           {MODE_OPTIONS.map(({ mode: m, label }) => (
@@ -73,15 +78,11 @@ export function DevResultsPreview() {
       </div>
 
       <div className="w-full max-w-3xl">
-        {mode === "escalation" ? (
-          <EscalationPlaceholder onBack={() => setMode("risky")} />
-        ) : (
-          <ResultScreen
-            result={MOCK_RESULTS[mode]}
-            onGotIt={() => setMode("risky")}
-            onEscalate={() => setMode("escalation")}
-          />
-        )}
+        <ResultScreen
+          result={MOCK_RESULTS[mode]}
+          onGotIt={() => setMode("risky")}
+          onEscalate={() => router.push("/dev/escalation")}
+        />
       </div>
     </main>
   );

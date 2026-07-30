@@ -1,6 +1,6 @@
 # Execution Plan: Escalation & Remediation Flow (D1)
 
-**Status: Phase 1-3 built, verified, and committed. Phase 4 (wire to C1 + end-to-end pass) not started.**
+**Status: Feature complete. All four phases (content/logic, triage screen, wizard + closing, wire to C1 + end-to-end pass) built, verified, and committed.**
 
 Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flow.md) into buildable steps. Keep this file current as we go — check off items, update the Status line, and fill in the Decisions Log — so the work can be picked back up cold in a later session.
 
@@ -57,17 +57,17 @@ Turns [Mini-PRD: Escalation & Remediation Flow](./prd-escalation-remediation-flo
 
 📦 **Commit checkpoint:** wizard + closing screen — committed.
 
-## Phase 4 — Wire to C1 + end-to-end pass
+## Phase 4 — Wire to C1 + end-to-end pass ✅ (done, verified, committed)
 
-- [ ] Replace `check-form.tsx`'s `"escalation"` stage — currently rendering `EscalationPlaceholder` — with the real flow built in Phases 2–3.
-- [ ] Remove the now-unused `EscalationPlaceholder` component and the stale "Escalation placeholder" mode in `/dev/results` (superseded by `/dev/escalation`), so nothing in the app still points to placeholder copy claiming D1 isn't built.
-- [ ] Full click-through: C1 (real risky verdict) → escalate → triage → steps → closing → done → back to a fresh B1.
-- [ ] Accessibility pass: keyboard order through checkboxes and Next/Back, focus management on each step transition (same "move focus to heading" pattern already used on B3 and the C-screens), computed WCAG contrast on any new elements.
-- [ ] Regression check: landing page, B1–B3, C1–C3 (safe/not-sure verdicts untouched by this feature), clean `tsc`/`lint`/`build`.
+- [x] Replaced `check-form.tsx`'s `"escalation"` stage — was rendering `EscalationPlaceholder` — with the real `EscalationFlow` built in Phases 2–3. One-line swap, as designed.
+- [x] Removed the now-unused `EscalationPlaceholder` component entirely (deleted, not left as dead code) and updated `/dev/results`: dropped its stale "Escalation placeholder" mode, pointed its "Escalation" banner note at `/dev/escalation`, and its escalation button now navigates there directly instead of showing a local mock.
+- [x] Full click-through with real API calls: landing page → real click into `/check` → real risky verdict (an electric-bill gift-card scam) → C1 → real escalation button → real D1 triage → real wizard (2 steps: money → monitor) → real closing screen (just the "Done" button, no "Notify" leftover) → back to a genuinely empty B1. Ran a second pass selecting "not sure" to confirm the full 5-step sequence and the closing screen's tab order.
+- [x] Accessibility pass: keyboard tab order clean at every stage checked (C1, triage, closing) in the *real* assembled flow (not just the isolated dev preview), with each screen's heading correctly excluded from Tab order (focus-only). No new colors introduced in Phases 3–4, so Phase 2's contrast audit still covers everything.
+- [x] Regression check: no console errors anywhere across the whole session (landing page, `/check`, `/dev/results`, `/dev/escalation`); clean `tsc`/`lint`/`build`, with the route list showing exactly what's expected (`/`, `/check`, `/api/check`, `/dev/escalation`, `/dev/results` — no stray placeholder routes).
 
-🧪 **Test checkpoint:** walk the entire flow start to finish, in one continuous session, then the accessibility/regression pass.
+🧪 **Test checkpoint — done (by me, holding for your review):** see above — this exercised the real Gemini backend twice (used 2 of today's 20 free-tier requests).
 
-📦 **Commit checkpoint:** feature complete.
+📦 **Commit checkpoint:** feature complete — committed.
 
 ## Decisions log
 
@@ -83,6 +83,10 @@ _(Anything decided during execution that isn't already captured in the mini-PRD.
 - **"Not sure" is mutually exclusive with the other options**, not additive — selecting it clears everything else and vice versa. Wasn't explicitly specified in the mini-PRD; chosen because "not sure" already means "show me everything" in the branching logic, so letting it coexist with specific selections would just be confusing UI state with no behavioral difference.
 - **Checkbox cards use large, full-row touch targets** (the whole card is a `<label>`, not just the small checkbox square) — consistent with the "large touch targets" design principle already applied elsewhere.
 - **Added focus-on-arrival now instead of deferring to Phase 4**, since Phase 3 (B1–B3) already established this exact pattern and it costs nothing to apply consistently as each new screen is built, rather than retrofitting it later.
+
+**Phase 4:**
+- **`/dev/results`'s escalation button now navigates to `/dev/escalation`** (via `next/navigation`'s `useRouter`) rather than rendering anything inline, since that route already owns reviewing the full D1 flow — avoided building a second, redundant copy of it inside the results-preview page.
+- **No new contrast audit needed** — Phases 3–4 introduced no new colors or components beyond what Phase 2 already reused from the existing design tokens, so the Phase 2 computed contrast numbers still stand.
 
 **Phase 3:**
 - **Removed the "Notify a trusted contact" button and D2 entirely, per your direct feedback** after the first version of this phase was reviewed: contacting a family member or friend doesn't need an in-app feature to do it for them, and building one risks a patronizing, unearned assumption about this persona's capability (your words: "it's not like older adults don't know how to contact their family members or friends"). The closing screen keeps its supportive text; "Done" is now the only, primary button. `TrustedContactPlaceholder` was deleted rather than left as dead code. Recorded as standing guidance for future features aimed at this persona, not just a one-off tweak — see the project memory this produced.
