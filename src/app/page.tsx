@@ -17,7 +17,7 @@ export default function Home() {
               >
                 verified_user
               </span>
-              <span>Trusted by 50,000+ users worldwide</span>
+              <span>Built to keep your conversations safe</span>
             </div>
             <h1 className="font-headline-lg text-headline-lg text-on-surface mx-auto mb-6 max-w-[800px] md:text-[56px] md:leading-[64px]">
               Not sure about a message? <br />
