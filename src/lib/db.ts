@@ -1,14 +1,14 @@
-import Database from "better-sqlite3";
-import path from "node:path";
+import { Pool } from "pg";
 
-const DB_PATH = path.join(process.cwd(), "data", "app.db");
+// Connects as a role whose search_path is the "guardia" schema, so
+// unqualified table names resolve there.
+let pool: Pool | null = null;
 
-let db: Database.Database | null = null;
-
-export function getDb(): Database.Database {
-  if (!db) {
-    db = new Database(DB_PATH);
-    db.pragma("journal_mode = WAL");
+export function getDb(): Pool {
+  if (!pool) {
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) throw new Error("DATABASE_URL is not set");
+    pool = new Pool({ connectionString, max: 5 });
   }
-  return db;
+  return pool;
 }
